@@ -1,13 +1,15 @@
-def download_audio(url: str, ):
-    import yt_dlp
-    import os, pathlib
+from __future__ import annotations
+from pathlib import Path
 
-    target_dir = pathlib.Path(os.getcwd() + 'audio_files')
-    target_dir.mkdir(exist_ok=True, parents=True)
+def download_audio(url: str, output_dir: str | Path):
+    import yt_dlp
+
+    output_path = Path(output_dir)
+    output_path.mkdir(exist_ok=True, parents=True)
 
     ydl_opts = {
         'format': 'bestaudio/best',
-        'outtmpl': 'audio_files/%(title)s.%(ext)s',
+        'outtmpl': str(output_path / '%(title)s.%(ext)s'),
         'postprocessors': [{
             'key': 'FFmpegExtractAudio',
             'preferredcodec': 'mp3',
@@ -16,7 +18,10 @@ def download_audio(url: str, ):
     }
     
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        # 1. Extracts video info without downloading
         info = ydl.extract_info(url, download=False)
-        print(info)
-        ydl.download(url)
-        
+        # 2. Downloads the audio
+        ydl.download([url])
+        # 3. Extract the path where the video was stored
+        downloaded_path = Path(ydl.prepare_filename(info)).with_suffix('.mp3')
+        return downloaded_path
