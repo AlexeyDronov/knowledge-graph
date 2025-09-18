@@ -23,7 +23,9 @@ def download(
 
 @app.command()
 def transcribe(file: Annotated[Path, Option()]):
+    from knowledge_graph import transcribe_audio
     echo(f"Transcribing file {file}")
+    out = transcribe_audio(file)
 
 if __name__ == "__main__":
     app()

@@ -1,5 +1,6 @@
 # raw data
 audio_files/
+transcriptions/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
